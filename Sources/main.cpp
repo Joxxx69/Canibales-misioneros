@@ -1,105 +1,57 @@
 #include <iostream>
+//#include <bits/stdc++.h>
 #include "../Headers/cabecera.h"
 
-void almacenarVisitado(Estado *);
-bool fueVisitado(Estado );
+using namespace std;
 int anchuraBFS(Nodo *);
-//Estado *arregloEstados, *estadoVisitado;    
-//int nodosVisitado = 0;
- 
+void estadosRepetidos(Nodo *, Frontera, Frontera);
+
 int main(){
-    Nodo nodo,*punteroNodo=NULL;    
-    punteroNodo=nodo.autoApuntador();
-    anchuraBFS(punteroNodo);
+    Nodo nodo;   
+    anchuraBFS(nodo.autoApuntador()); // argumento --> punteronodo --> auto-apuntado
     return 0;
 };
 
-//int anchuraBFS(Nodo *punteroNodo){
 int anchuraBFS(Nodo *punteroNodo){
+    cout<<"-----------------  Busqueda en Anchura (BFS)  -----------------"<<endl;
+    Frontera elementoF, frontera, estadoVisitado;
+    frontera=*elementoF.autoApuntadorF();  // creacion y auto apuntado a los nodos de la frontera
+    estadoVisitado = frontera;             // creacion y auto-apuntado a los estados en la frontera
+    frontera.addElemento(punteroNodo);    // agregar un puntero a la frontera --> auto-Apuntado 
+
+    Estado *punterobmc; //craecion de un puntero al estado
+    Estado estado;
+
     int nivel=0;
-    cout<<"-----------------  BUSQUEDA EN BFS  -----------------"<<endl;
-
-    //CREACIÓN DE LA FRONTERA Y UN APUNTADOR A LA FRONTERA
-    //Frontera elementoF,*frontera=NULL;
-    //frontera=elementoF.autoApuntadorF();
-    //frontera->addElemento(punteroNodo);
-    Frontera elementoF,frontera, *estadoVisitado, visitado;
-    frontera=*elementoF.autoApuntadorF();
-    frontera.addElemento(punteroNodo);
-    estadoVisitado = visitado.autoApuntadorF();
-
-    //CREACIÓN DEL ARRAY DE ESTADOS VISITADOS Y UN PUNTERO AL ARRAY
-
-
-    //CREACION DE UN PUNTERO DE TIPO ESTADO
-    Estado *punterobmc;
-
-    //CICLO PARA QUE EXPLORE EL NODO ACORDE A LOS ELEMENTOS DE LA FRONTERA
-    do{
+    while(!frontera.fronteraVacia()){
         cout<<"-----------------------------------------------------"<<endl;
-        cout<<"\n\t\tNIVEL DEL ARBOL: "<<nivel++<<endl;
-        //int nodosTotalesFrontera=frontera->nodosTotalesF;
-        int nodosTotalesFrontera=frontera.nodosTotalesF;
-        cout<<"NUMERO DE ELEMENTOS EN FRONTERA: "<<nodosTotalesFrontera<<endl;
-        for(int i = 0; i<nodosTotalesFrontera;i++){                                      //PARA CADA ELEMENTO DE LA FRONTERA
-            cout<<"EXTRAYENDO EL PRIMER NODO DE LA FRONTERA"<<endl;
-            punteroNodo=frontera.f[0];                                                   // EXTRAER EL PRIMER ELEMENTO DE LA FRONTERA
-            punteroNodo->e.print();
-            if((punteroNodo->e.estadoObjetivo())){                                 //TEST OBJETIVO DEL ESTADO DEL NODO ESTRAIDO
-                    cout<<"EXISTE UNA SOLUCION: \nSE DESCRIBE LOS PASOS A REALIZAR EN ORDEN INVERSO: "<<endl;
-                    punteroNodo->hallarRaiz(punteroNodo);                                          //SI HALLA LA SOLUCION IMPRIME
-                    frontera.~Frontera();                                       //DESTRUYE LOS OBJETOS DE TIPO FRONTERA
-                    return 1;                                                    //RETORNA 1 SI HALLA LA SOLUCIÓN
-            }else{                                                      //SI EL ESTADO NO ES EL OBJETIVO HACER ...
-                punterobmc=punteroNodo->e.apuntadorEstado();                         //CREAMOS UN PUNTERO AL ESTADO DEL NODO EXTRAIDO DE LA FRONTERA
-                cout<<"puntero bmc: "<<endl;
-                estadoVisitado->almacenarVisitado(punterobmc);                    //AÑADIMOS EL ESTADO EXTRAIDO A LA LISTA DE ESTADOS VISITADOS
-                //almacenarVisitado(punterobmc);                    //AÑADIMOS EL ESTADO EXTRAIDO A LA LISTA DE ESTADOS VISITADOS
-                int num_Hijos_Creados=punteroNodo->funcionSucesor();                                       //CREAMOS LOS HIJOS DEL NODO EXTRAIDO DE LA FRONTERA
-                cout<<"EL NUMERO DE HIJOS POSIBLES QUE TIENE ES: "<<num_Hijos_Creados<<endl;
-                //cout<<"HIJOS DEL NODO "<<i<<" EN FRONTERA: "<<punteroNodo->fR<<endl;
-
-                for(int j=0; j<punteroNodo->fR;j++){                                 //PARA CADA HIJO DEL NODO EXTRAIDO HACER
-                    if(estadoVisitado->fueVisitado(punteroNodo->punteroHijos[j]->e.apuntadorEstado())==false){  //VERIFICAMOS QUE EL ESTADO NO HAYA SIDO VISITADO
-                    //if(fueVisitado(punteroNodo->punteroHijos[j]->e.apuntadorEstado())==false){  //VERIFICAMOS QUE EL ESTADO NO HAYA SIDO VISITADO
+        cout<<endl<<"Nivel: "<<nivel<<endl;
+        int nodosFrontera=frontera.nodosTotalesF;
+        cout<<"Nodos en Frontera: "<<nodosFrontera<<endl;
+        for(int i = 0; i<nodosFrontera;i++){                       
+            cout<<"Extraccion de Nodo en Frontera"<<endl;
+            punteroNodo=frontera.f[0];    //primer nodo de la frontera
+            punteroNodo->e.impresion();
+            if((punteroNodo->e.estadoObjetivo())){ // true --> estado objetivo alcanzado; false --> estado objetivo no alcanzado
+                cout<<"-----------------------------------------------------"<<endl;
+                cout << "Hallar Raiz:" << endl;
+                punteroNodo->hallarRaiz(punteroNodo); // imprime los pasos hasta llegar al padre
+                frontera.~Frontera();                 // elimina la frontera
+                return 1;                             
+            }else{
+                estadoVisitado.almacenarVisitado(punteroNodo->e.apuntadorEstado()); // almacenar el estado auto-apuntado de la frontera             
+                int cantidadHijos=punteroNodo->funcionSucesor();   // retorno de cantidad de hijos y su respectiva creacion
+                cout<<"Hijos totales: "<<cantidadHijos<<endl;
+                for(int j=0; j<punteroNodo->hijosporNodo;j++){                                 //PARA CADA HIJO DEL NODO EXTRAIDO HACER
+                    if(estadoVisitado.fueVisitado(punteroNodo->punteroHijos[j]->e.apuntadorEstado())==false){  //VERIFICAMOS QUE EL ESTADO NO HAYA SIDO VISITADO
                         frontera.addElemento(punteroNodo->punteroHijos[j]);           //SI EL ESTADO DEL NODO HIJO NO HA SIDO VISITADO, SE LO AÑADE A LA FRONTERA
-                        //punteroNodo->punteroHijos[j]->e.print();
                     }
                 }
-                frontera.eliminarElemento(punteroNodo);             //COMO EL NODO FUE EXTRAIDO DE LA FRONTERA, LO ELIMINAMOS
+                frontera.eliminarElemento(punteroNodo); 
             }
-            //cout<<"INGRESARON EN FRONTERA"<<endl;
         }
-        //break;
-    }while(frontera.fronteraVacia()==false);
+        nivel++;
+    };
     return 0;
 };
-
- 
-
-//void almacenarVisitado (Estado *estado){
-//    arregloEstados = new Estado [nodosVisitado + 1]; // Asigno dinamicamente nodosTotalesF+1 elementos en ATPN (uno mas de lo que hay en f)
-//    for (int i = 0; i < nodosVisitado; i++){
-//            arregloEstados[i] = estadoVisitado[i]; // ATPN igual a frontera APN (Arreglo de punteros a nodo)
-//    }
-//    arregloEstados[nodosVisitado]=*estado;                 //Ingreso el nuevo elemento al final de la frontera
-//    estadoVisitado=arregloEstados;                      //f toma lo que se tiene en auxx
-//    nodosVisitado++;                      //Aumento e numero de elementos de frontera
-//};
-
-//bool fueVisitado(Estado *estado){
-//    bool resultado = false;
-//    for(int i=0;i<nodosVisitado;i++){
-//        if((estado->bmc[0]==estadoVisitado[i].bmc[0]) && (estado->bmc[1]==estadoVisitado[i].bmc[1]) && (estado->bmc[2]==estadoVisitado[i].bmc[2])){
-//            resultado=true;
-//            estado->print();
-//            cout<<"YA FUE VISITADO"<<endl;
-//            return resultado;
-//        }
-//    }
-//    estado->print();
-//    cout<<"NO FUE VISITADO"<<endl;
-//    return resultado;
-//};
-
 

@@ -14,28 +14,20 @@ public:
         bmc[2]=3; //numero de canibales
     };
 
-    Estado * apuntadorEstado(){  //auto apuntador a la misma instancia de la clase
-        return this;
-    };
+    Estado * apuntadorEstado(){return this;}; //auto apuntador 
 
     void operator=(Estado e) { //tomo lo que está en e y lo copio
-        for (int i=0; i<3; i++) {
-            bmc[i]=e.bmc[i];
-        }
+        for (int i=0; i<3; i++) {bmc[i]=e.bmc[i];}
     };
 
     void operator= (int e) { //tomo lo que está en e y lo copio
-        for(int i=0; i<3; i++) {
-            bmc[i]=e;
-        }
+        for(int i=0; i<3; i++) {bmc[i]=e;}
     };
 
     bool operator==(Estado e) { //Sobrecarga del operador (==)
         bool flag=true;
         for(int i=0; i<3; i++) {
-            if(bmc[i]==e.bmc[i]) {
-                flag=false;
-            }
+            if(bmc[i]==e.bmc[i]) {flag=false;}
         }
         return flag;
     };
@@ -43,9 +35,7 @@ public:
     bool operator!=(Estado e) { //Sobrecarga del operador (!=)
         bool flag=false;
         for(int i=0; i<3; i++) {
-            if(bmc[i]==e.bmc[i]) {
-                flag=true;
-            }
+            if(bmc[i]==e.bmc[i]) {flag=true;}
         }
         return flag;
     };
@@ -54,16 +44,16 @@ public:
         return (bmc[0] == 0 && bmc[1]==0 && bmc[2]==0 ); //Retorno false o true, dependiendo si llego al estado objetivo
     };
 
-    void print() {    //Imprimir el estado
-        cout<<"- - - - - - - - -  \t \t- - - - - - - - -"<<endl;
-        for(int i =0; i<3; i++) {
+    void impresion() {    //Imprimir el estado
+        cout<<"-----------------  \t \t-----------------"<<endl;
+        for(int i =2; i>=0; i--) {
             cout<<bmc[i]<<"\t";
         }
         cout<<"\t";
-        for(int i=0;i<3;i++){
+        for(int i=2;i>=0;i--){
             (i > 0) ? cout << 3 - bmc[i] << "\t" : cout << 1 - bmc[i] << "\t";
         }
-        cout<<endl<<"- - - - - - - - - \t \t- - - - - - - - -"<<endl;
+        cout<<endl<<"-----------------  \t \t-----------------"<<endl;
     };
 };
 
@@ -71,20 +61,18 @@ class Nodo {
 public:
     Nodo * punteroPadre;    //Puntero a padre
     Nodo **punteroHijos;   //Puntero a hijos
-    int  fR;    //Factor de ramificación (numero de hijos en cada nodo)
+    int  hijosporNodo;    //Factor de ramificación
     int n;      //Profundidad del arbol (nivel)--> cantidad de nodos en el camino mas largo de la raiz a una hoja
     Estado e;   //Estado almacena el estado
 
     Nodo() {
         punteroPadre=NULL;
         punteroHijos=NULL;
-        fR=0;
+        hijosporNodo=0;
         n=0;  
     };
 
-    Nodo* autoApuntador() { //retorna un puntero a su posicion
-        return this;
-    };
+    Nodo* autoApuntador() {return this;};//retorna un puntero a su posicion
 
     int funcionSucesor() { //retorna el numero de hijos para cada nodo --> maximo 5 
         int cantidadHijos=5, fact;
@@ -147,9 +135,9 @@ public:
     };
 
     void expansion(int cantidadHijos){     //creacion de hijos de acuerdo a su cantidad
-        fR=cantidadHijos;
-        punteroHijos=new Nodo*[fR];    //creado espacio en memoria para los arreglos
-        for(int i=0;i<fR;i++){
+        hijosporNodo=cantidadHijos;
+        punteroHijos=new Nodo*[hijosporNodo];    //creado espacio en memoria para los arreglos
+        for(int i=0;i<hijosporNodo;i++){
             punteroHijos[i]=new Nodo;
             punteroHijos[i]->punteroPadre=this; // se hace un auto apuntado
             punteroHijos[i]->n=n+1;  //el nivel del hijo es igual al del padre + 1
@@ -160,10 +148,10 @@ public:
     Nodo* hallarRaiz(Nodo *pnt){    //recupera el nodo padre
         Nodo *Padre;
         if(pnt->punteroPadre!=NULL){
-            pnt->e.print();
+            pnt->e.impresion();
             Padre=hallarRaiz(pnt->punteroPadre);
         }else{
-            pnt->e.print();
+            pnt->e.impresion();
         };
         return Padre;
     };
@@ -218,12 +206,12 @@ public:
         for(int i=0;i<nodosTotalesF;i++){
             if((estado->bmc[0]==estadoVisitado[i].bmc[0]) && (estado->bmc[1]==estadoVisitado[i].bmc[1]) && (estado->bmc[2]==estadoVisitado[i].bmc[2])){
                 resultado=true;
-                estado->print();
+                estado->impresion();
                 cout<<"YA FUE VISITADO"<<endl;
                 return resultado;
             }
         }
-        estado->print();
+        estado->impresion();
         cout<<"NO FUE VISITADO"<<endl;
         return resultado;
     };
