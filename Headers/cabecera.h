@@ -173,6 +173,7 @@ public:
 class Frontera{
 public:
     Nodo **f;   //Conjunto de elementos en frontera / Arreglo dinámico de punteros a nodo
+    Estado *arregloEstados, *estadoVisitado;    
     int nodosTotalesF;    //Número de elementos de frontera
 
     Frontera(){ //Constructor
@@ -180,13 +181,10 @@ public:
         nodosTotalesF=0;  //Inicializo contador de frontera a 0
     };
 
-    Frontera* autoApuntadorF() { // se retorna asi mismo
-        return this;
-    };
+    Frontera* autoApuntadorF() {return this;};
 
     ~Frontera(){    //Destructor de la clase
         for(int C=0; C<nodosTotalesF;C++){f[C]=NULL;};
-        delete[] f;
         f=NULL;
         nodosTotalesF=0;
     };
@@ -204,6 +202,32 @@ public:
         f=aux;                      //f toma lo que se tiene en auxx
         nodosTotalesF++;                      //Aumento e numero de elementos de frontera
     };
+
+    void almacenarVisitado (Estado *estado){
+        arregloEstados = new Estado [nodosTotalesF + 1]; // Asigno dinamicamente nodosTotalesF+1 elementos en ATPN (uno mas de lo que hay en f)
+        for (int i = 0; i < nodosTotalesF; i++){
+                arregloEstados[i] = estadoVisitado[i]; // ATPN igual a frontera APN (Arreglo de punteros a nodo)
+        }
+        arregloEstados[nodosTotalesF]=*estado;                 //Ingreso el nuevo elemento al final de la frontera
+        estadoVisitado=arregloEstados;                      //f toma lo que se tiene en auxx
+        nodosTotalesF++;                      //Aumento e numero de elementos de frontera
+    };
+
+    bool fueVisitado(Estado *estado){
+        bool resultado = false;
+        for(int i=0;i<nodosTotalesF;i++){
+            if((estado->bmc[0]==estadoVisitado[i].bmc[0]) && (estado->bmc[1]==estadoVisitado[i].bmc[1]) && (estado->bmc[2]==estadoVisitado[i].bmc[2])){
+                resultado=true;
+                estado->print();
+                cout<<"YA FUE VISITADO"<<endl;
+                return resultado;
+            }
+        }
+        estado->print();
+        cout<<"NO FUE VISITADO"<<endl;
+        return resultado;
+    };
+
 
 
 
@@ -243,49 +267,6 @@ public:
 
 };
 
-class Explorado{
-public:
-    //Estado **estdVisitados;   //Conjunto de estados visitados / Arreglo dinámico de punteros a estados
-    Estado *estdVisitados;   //Conjunto de estados visitados / Arreglo dinámico de punteros a estados
-    int nEV;    //Número de estados de visitados
-
-    Explorado(){ //Constructor
-        estdVisitados=NULL; //Puntero inicial apunta a null / nada
-        nEV=0;  //Inicializo contador de frontera a 0
-    };
-
-    Explorado* autoApuntExpl() { //Retorna un puntero a si mismo
-        return this;
-    };
-
-    void addEstadoVisitado (Estado *est){
-        Estado *arreglo;
-        arreglo = new Estado [nEV + 1];
-        for(int i=0;i<nEV;i++){
-            arreglo[i] = estdVisitados[i];
-        }
-        arreglo[nEV]=*est;                 //Ingreso el nuevo elemento al final de la frontera
-        estdVisitados=arreglo;                      //f toma lo que se tiene en auxx
-        nEV++;                      //Aumento e numero de elementos de frontera
-    };
-
-    //bool fueVisitado(Estado *estdo){
-    bool fueVisitado(Estado *estdo){
-        bool resultado = false;
-        for(int i=0;i<nEV;i++){
-            if((estdo->bmc[0]==estdVisitados[i].bmc[0]) && (estdo->bmc[1]==estdVisitados[i].bmc[1]) && (estdo->bmc[2]==estdVisitados[i].bmc[2])){
-                resultado=true;
-                estdo->print();
-                cout<<"YA FUE VISITADO"<<endl;
-                return resultado;
-            }
-        }
-        estdo->print();
-        //estdo.print();
-        cout<<"NO FUE VISITADO"<<endl;
-        return resultado;
-    };
-};
 
 #endif // CABECERA_H_INCLUDED
 
