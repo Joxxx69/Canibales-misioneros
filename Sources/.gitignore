@@ -1,4 +1,3 @@
-*.exe
-#.exe
+*main.exe
 .exe
 .gitignore
