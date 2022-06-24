@@ -26,16 +26,19 @@ void anchuraBFS(Nodo *punteroNodo){
         int nodosFrontera=frontera.nodosTotalesF;
         cout<<"Nodos en Frontera: "<<nodosFrontera<<endl;
         for(int i = 0; i<nodosFrontera;i++){                       
-            cout<<"\t   Nodo Frotera - Nodo Padre"<<endl;
             punteroNodo=frontera.f[0];    //primer nodo de la frontera
-            punteroNodo->e.impresion();
+            (punteroNodo->e.estadoObjetivo())? 
+            cout << "\t   Estado Objetivo Alcanzado" << endl:
+            cout<<endl<<"\t   Nodo Frotera - Nodo Padre ["<<i+1<<"]"<<endl;
             if((punteroNodo->e.estadoObjetivo())){ // true --> estado objetivo alcanzado; false --> estado objetivo no alcanzado
+                punteroNodo->e.impresion();
                 cout<<"-------------------------------------------------"<<endl;
                 cout <<endl<<"\t\t   Hallar Raiz" << endl;
                 punteroNodo->hallarRaiz(punteroNodo); // imprime los pasos hasta llegar al padre
                 frontera.~Frontera();                 // elimina la frontera
                 break;
             }
+            punteroNodo->e.impresion();
             estadoVisitado.almacenarVisitado(punteroNodo->e.apuntadorEstado()); // almacenar el estado auto-apuntado de la frontera             
             int cantidadHijos=punteroNodo->funcionSucesor();   // retorno de cantidad de hijos y su respectiva creacion
             cout<<"Hijos totales: "<<cantidadHijos<<endl;
