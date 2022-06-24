@@ -19,10 +19,10 @@ void anchuraBFS(Nodo *punteroNodo){
     estadoVisitado = frontera;             // creacion y auto-apuntado a los estados en la frontera
     frontera.addElemento(punteroNodo);    // agregar un puntero a la frontera --> auto-Apuntado 
 
-    int nivel=0;
+    int nivelArbol=0;
     while(!frontera.fronteraVacia()){
         cout<<"-------------------------------------------------"<<endl;
-        cout<<endl<<"Nivel: "<<nivel<<endl;
+        cout<<endl<<"Nivel: "<<nivelArbol<<endl;
         int nodosFrontera=frontera.nodosTotalesF;
         cout<<"Nodos en Frontera: "<<nodosFrontera<<endl;
         for(int i = 0; i<nodosFrontera;i++){                       
@@ -46,7 +46,7 @@ void anchuraBFS(Nodo *punteroNodo){
             }
             frontera.eliminarElemento(punteroNodo); // se elimina el primer nodo
         }
-        nivel++;
+        nivelArbol++;
     };
 };
 
