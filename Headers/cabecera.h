@@ -44,16 +44,16 @@ public:
         return (bmc[0] == 0 && bmc[1]==0 && bmc[2]==0 ); //Retorno false o true, dependiendo si llego al estado objetivo
     };
 
-    void impresion() {    //Imprimir el estado
-        cout<<"-----------------  \t \t-----------------"<<endl;
-        for(int i =2; i>=0; i--) {
-            cout<<bmc[i]<<"\t";
+    void impresion() { 
+        cout<<"-----------------\t\t-----------------"<<endl;
+        for(int i =2; i>=0; i--) {   // imprime estado al lado izquierdo
+            (i==0)?cout<<bmc[i] :cout<<bmc[i]<<"\t";
         }
-        cout<<"\t";
-        for(int i=2;i>=0;i--){
-            (i > 0) ? cout << 3 - bmc[i] << "\t" : cout << 1 - bmc[i] << "\t";
+        cout<<"   --------->   ";
+        for(int i=2;i>=0;i--){ // imprime estado al lado derecho
+            (i > 0) ? cout << 3 - bmc[i] << "\t" : cout << 1 - bmc[i] << "\t"; 
         }
-        cout<<endl<<"-----------------  \t \t-----------------"<<endl;
+        cout<<endl<<"-----------------\t\t-----------------"<<endl;
     };
 };
 
@@ -62,14 +62,14 @@ public:
     Nodo * punteroPadre;    //Puntero a padre
     Nodo **punteroHijos;   //Puntero a hijos
     int  hijosporNodo;    //Factor de ramificación
-    int n;      //Profundidad del arbol (nivel)--> cantidad de nodos en el camino mas largo de la raiz a una hoja
-    Estado e;   //Estado almacena el estado
+    int nivel;      //Profundidad del arbol (nivel)--> cantidad de nodos en el camino mas largo de la raiz a una hoja
+    Estado e;   
 
     Nodo() {
         punteroPadre=NULL;
         punteroHijos=NULL;
         hijosporNodo=0;
-        n=0;  
+        nivel=0;  
     };
 
     Nodo* autoApuntador() {return this;};//retorna un puntero a su posicion
@@ -106,7 +106,7 @@ public:
 
         int accionValida[5] = {1, 1, 1, 1, 1}; // 0 --> accion posible; 1 -> accion invalida;
 
-        //obtiene los posibles estados a partir del padre
+        //posibles estados hijos apartir del estado padre
         for(int j=0; j<5; j++) {
             fact = (e.bmc[0] == 1) ? -1 : 1; //  1 -> der a izq; -1 -> de izq a der;
             for(int i =0; i<3;i++) {  // genera hijos al padre --> maximo 5
@@ -122,10 +122,10 @@ public:
         expansion(cantidadHijos); //genera hijos de acuerdo al padre
 
         int cont=0;
-        for(int j=0;j<5;j++){ // definicion de estado del hijo de acuerdo a la accion permitida
+        for(int j=0;j<5;j++){  // acciones validas para cada hijo(futuro padre)
             if(accionValida[j]==1){
                for(int i=0;i<3;i++){
-                    // el hijo tiene el mismo estado del padre y se le suma el el factor por la accion
+                    // hijo con el estado del padre --> el (fact*accion[i][j]) cambiara el estado heredado
                     punteroHijos[cont]-> e.bmc[i]=punteroHijos[cont]->e.bmc[i]+(fact*accion[i][j]);
                }
                cont++;
@@ -134,14 +134,14 @@ public:
         return cantidadHijos;
     };
 
-    void expansion(int cantidadHijos){     //creacion de hijos de acuerdo a su cantidad
+    void expansion(int cantidadHijos){   
         hijosporNodo=cantidadHijos;
-        punteroHijos=new Nodo*[hijosporNodo];    //creado espacio en memoria para los arreglos
+        punteroHijos=new Nodo*[hijosporNodo]; // arreglo dinamico de punteros 
         for(int i=0;i<hijosporNodo;i++){
             punteroHijos[i]=new Nodo;
             punteroHijos[i]->punteroPadre=this; // se hace un auto apuntado
-            punteroHijos[i]->n=n+1;  //el nivel del hijo es igual al del padre + 1
-            punteroHijos[i]->e=e;      // el estado del hijo es igual al del padre
+            punteroHijos[i]->nivel=nivel+1;     //nivel del arbol --> siempre + 1 que el padre
+            punteroHijos[i]->e=e;      //hijo como posible padre --> tendra sus respectivos hijos
         }   
     };
 
@@ -157,16 +157,15 @@ public:
     };
 };
 
-// la frontera es un arreglo dinamico
 class Frontera{
 public:
-    Nodo **f;   //Conjunto de elementos en frontera / Arreglo dinámico de punteros a nodo
-    Estado *arregloEstados, *estadoVisitado;    
+    Nodo **f;   
+    Estado *arregloEstados, *estadoVisitado;  //punteros para la verficacion de estados
     int nodosTotalesF;    //Número de elementos de frontera
 
-    Frontera(){ //Constructor
-        f=NULL; //Puntero inicial apunta a null / nada
-        nodosTotalesF=0;  //Inicializo contador de frontera a 0
+    Frontera(){ 
+        f=NULL; 
+        nodosTotalesF=0;  
     };
 
     Frontera* autoApuntadorF() {return this;};
@@ -180,44 +179,41 @@ public:
     bool fronteraVacia(){ return (f == NULL); }// true --> frontera vacia; false --> frontera con elementos
 
     void addElemento (Nodo *n){
-        Nodo **aux;                 //Arreglo temporal de punteros a nodos
-        aux=new Nodo* [nodosTotalesF+1];      //Asigno dinamicamente nodosTotalesF+1 elementos en ATPN (uno mas de lo que hay en f)
+        Nodo **aux;
+        aux=new Nodo* [nodosTotalesF+1];     // arreglo dinamico de punteros de tipo Nodo 
         for(int i=0;i<nodosTotalesF;i++){
-            aux[i]=f[i];            //ATPN igual a frontera APN (Arreglo de punteros a nodo)
+            aux[i]=f[i];
         }
-        aux[nodosTotalesF]=n;                 //Ingreso el nuevo elemento al final de la frontera
-        if(nodosTotalesF>0){delete[] f;}           //Borro el espacio de memoria del arreglo de punteros de f
-        f=aux;                      //f toma lo que se tiene en auxx
-        nodosTotalesF++;                      //Aumento e numero de elementos de frontera
+        aux[nodosTotalesF]=n;               // ingreso de estado al final de la cola
+        if(nodosTotalesF>0){delete[] f;}   //eliminacion del arreglo f en memoria
+        f=aux;                      
+        nodosTotalesF++;
     };
 
     void almacenarVisitado (Estado *estado){
-        arregloEstados = new Estado [nodosTotalesF + 1]; // Asigno dinamicamente nodosTotalesF+1 elementos en ATPN (uno mas de lo que hay en f)
+        arregloEstados = new Estado [nodosTotalesF + 1]; // arreglo dinamico de tipo estado 
         for (int i = 0; i < nodosTotalesF; i++){
-                arregloEstados[i] = estadoVisitado[i]; // ATPN igual a frontera APN (Arreglo de punteros a nodo)
+                arregloEstados[i] = estadoVisitado[i]; 
         }
-        arregloEstados[nodosTotalesF]=*estado;                 //Ingreso el nuevo elemento al final de la frontera
-        estadoVisitado=arregloEstados;                      //f toma lo que se tiene en auxx
-        nodosTotalesF++;                      //Aumento e numero de elementos de frontera
+        arregloEstados[nodosTotalesF]=*estado; // ingreso de estado al final de la cola
+        estadoVisitado=arregloEstados;             
+        nodosTotalesF++;                    
     };
 
-    bool fueVisitado(Estado *estado){
-        bool resultado = false;
-        for(int i=0;i<nodosTotalesF;i++){
-            if((estado->bmc[0]==estadoVisitado[i].bmc[0]) && (estado->bmc[1]==estadoVisitado[i].bmc[1]) && (estado->bmc[2]==estadoVisitado[i].bmc[2])){
-                resultado=true;
-                estado->impresion();
-                cout<<"YA FUE VISITADO"<<endl;
-                return resultado;
+    bool estadoshijos(Estado *estado){
+        for(int i=0;i<nodosTotalesF;i++){   
+            if((estado->bmc[0]==estadoVisitado[i].bmc[0])){
+                if((estado->bmc[1]==estadoVisitado[i].bmc[1])){
+                    if((estado->bmc[2]==estadoVisitado[i].bmc[2])){
+                        estado->impresion();
+                        return true;
+                    }
+                }
             }
         }
         estado->impresion();
-        cout<<"NO FUE VISITADO"<<endl;
-        return resultado;
+        return false;
     };
-
-
-
 
     bool eliminarElemento(Nodo *n){
         bool resultado = false;
@@ -255,6 +251,5 @@ public:
 
 };
 
-
-#endif // CABECERA_H_INCLUDED
+#endif 
 
