@@ -13,7 +13,8 @@ int main(){
 };
 
 void anchuraBFS(Nodo *punteroNodo){
-    cout<<"-----------------  Busqueda en Anchura (BFS)  -----------------"<<endl;
+    cout<<"-------------------------------------------------"<<endl;
+    cout<<"----------  Busqueda en Anchura (BFS)  ----------"<<endl;
     Frontera elementoF, frontera, estadoVisitado;
     frontera=*elementoF.autoApuntadorF();  // creacion y auto apuntado a los nodos de la frontera
     estadoVisitado = frontera;             // creacion y auto-apuntado a los estados en la frontera
