@@ -1,16 +1,7 @@
 #include <iostream>
 //#include <bits/stdc++.h>
 #include "../Headers/cabecera.h"
-
 using namespace std;
-void anchuraBFS(Nodo *);
-void estadosRepetidos(Nodo *, Frontera, Frontera);
-
-int main(){
-    Nodo nodo;   
-    anchuraBFS(nodo.autoApuntador()); // argumento --> punteronodo --> auto-apuntado
-    return 0;
-};
 
 void anchuraBFS(Nodo *punteroNodo){
     cout<<"-------------------------------------------------"<<endl;
@@ -52,5 +43,12 @@ void anchuraBFS(Nodo *punteroNodo){
         }
         nivelArbol++;
     };
+};
+
+
+int main(){
+    Nodo nodo;   
+    anchuraBFS(nodo.autoApuntador()); // argumento --> punteronodo --> auto-apuntado
+    return 0;
 };
 
